@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Solace</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--a:#ccffdd;--b:#99bbff;--ink:#1c2b3d;--soft:#46607e;--card:rgba(255,255,255,.55);--edge:rgba(255,255,255,.8);--acc:#3a6bd6;--teal:#2f9e8f;--warn:#b4400f;color-scheme:light dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--a:#173d33;--b:#1f3566;--ink:#eaf2ff;--soft:#b5c6e6;--card:rgba(12,22,45,.5);--edge:rgba(255,255,255,.14);--acc:#8fb4ff;--teal:#4cccb9;--warn:#ff9b6b}}
+*{box-sizing:border-box}
+html{scroll-padding-top:70px}
+body{margin:0;min-height:100vh;font:16px/1.6 Nunito,system-ui,sans-serif;color:var(--ink);background:linear-gradient(90deg,var(--a),var(--b)) fixed}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;line-height:1.2;margin:0 0 .5em}
+h2{font-size:1.9rem}h3{font-size:1.15rem}
+nav{position:sticky;top:0;z-index:10;display:flex;gap:4px;align-items:center;overflow-x:auto;padding:10px 14px;background:var(--card);backdrop-filter:blur(14px);border-bottom:1px solid var(--edge)}
+nav b{font-family:Fraunces,serif;font-size:1.3rem;margin-right:12px}
+nav a{white-space:nowrap;text-decoration:none;color:var(--ink);padding:6px 12px;border-radius:99px;font-weight:600;font-size:.92rem}
+nav a:hover{background:var(--edge)}nav a.on{background:var(--ink);color:var(--a)}
+a{color:var(--acc)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+main{max-width:1000px;margin:0 auto;padding:32px 18px 60px}
+.page{display:none}.page.show{display:block}
+.card{background:var(--card);border:1px solid var(--edge);border-radius:18px;padding:20px;backdrop-filter:blur(8px);transition:transform .15s}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;margin:18px 0}
+.two{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}
+p{max-width:68ch}.mute{color:var(--soft)}
+button,.btn{font:inherit;font-weight:700;border:0;border-radius:99px;padding:10px 22px;background:var(--ink);color:var(--a);cursor:pointer;text-decoration:none;display:inline-block}
+button.alt{background:var(--edge);color:var(--ink)}
+input,select,textarea{font:inherit;width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--edge);background:var(--card);color:var(--ink)}
+label{display:block;font-weight:600;margin:12px 0 4px}
+form{max-width:420px}
+form.box{margin:20px auto;padding:30px;border-radius:26px}
+.hero{display:flex;flex-wrap:wrap;gap:30px;align-items:center;justify-content:space-between;min-height:340px}
+blockquote{font:italic 500 clamp(1.4rem,3.4vw,2.1rem)/1.35 Fraunces,serif;margin:0 0 12px;max-width:20ch}
+.scene{width:150px;height:150px;perspective:700px;margin:40px}
+.cube{width:100%;height:100%;position:relative;transform-style:preserve-3d;animation:spin 16s linear infinite}
+.cube i{position:absolute;inset:0;display:grid;place-items:center;font:700 1.1rem Fraunces,serif;font-style:normal;background:var(--card);border:1px solid var(--edge);backdrop-filter:blur(4px);box-shadow:inset 0 0 30px var(--edge)}
+.cube i:nth-child(1){transform:translateZ(75px)}.cube i:nth-child(2){transform:rotateY(180deg) translateZ(75px)}
+.cube i:nth-child(3){transform:rotateY(90deg) translateZ(75px)}.cube i:nth-child(4){transform:rotateY(-90deg) translateZ(75px)}
+.cube i:nth-child(5){transform:rotateX(90deg) translateZ(75px)}.cube i:nth-child(6){transform:rotateX(-90deg) translateZ(75px)}
+@keyframes spin{to{transform:rotateX(360deg) rotateY(360deg)}}
+@media (prefers-reduced-motion:reduce){.cube{animation:none;transform:rotateX(-20deg) rotateY(30deg)}.bar i,.br .t i,.circ{transition:none!important}}
+.bar{background:var(--edge);border-radius:99px;height:12px;margin:6px 0 14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:99px}
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}
+.av{width:60px;height:60px;border-radius:50%;display:grid;place-items:center;color:#fff;font:700 1.4rem Fraunces,serif;margin-bottom:10px}
+.tabs{display:flex;gap:6px;background:var(--edge);padding:5px;border-radius:99px;margin-bottom:8px}
+.tabs button{flex:1;background:transparent;color:var(--soft)}.tabs button.on{background:var(--ink);color:var(--a)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.chip.on{background:var(--ink);color:var(--a)}
+.dz h3{display:flex;justify-content:space-between;align-items:center;gap:8px}.dz ul{margin:8px 0;padding-left:20px;color:var(--soft)}
+.tag,.pill{display:inline-block;padding:2px 10px;border-radius:99px;background:var(--edge);font:700 .8rem Nunito,sans-serif;margin:2px 4px 2px 0}
+.stat b{font:700 2.2rem Fraunces,serif;display:block}
+.br{display:grid;grid-template-columns:110px 1fr 40px;gap:10px;align-items:center;margin:10px 0;font-size:.92rem}
+.br .t{height:16px;border-radius:99px;background:var(--edge);overflow:hidden}.br .t i{display:block;height:100%;width:0;border-radius:99px;transition:width 1s}
+.mem{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;max-width:380px}
+.mem button{aspect-ratio:1;font-size:1.8rem;border-radius:16px;background:var(--edge);color:var(--ink);padding:0}
+.mem .f{border:2px solid var(--acc)}.mem .m{border:2px solid var(--teal);background:#2f9e8f33}
+.circ{width:150px;height:150px;border-radius:50%;margin:18px auto;background:radial-gradient(circle,var(--a),var(--b));display:grid;place-items:center;font-weight:700;transition:transform 4s ease-in-out}
+.ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.4rem;margin-bottom:10px;background:var(--edge)}
+.note{background:var(--card);border-left:5px solid var(--teal);border-radius:12px;padding:12px 18px;font-size:.93rem;margin:18px 0}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{padding:9px 8px;border-bottom:1px solid var(--edge);text-align:left}th{color:var(--soft);font-weight:600}
+tr.row{cursor:pointer}tr.row:hover{background:var(--edge)}
+.chat{display:flex;flex-direction:column;gap:8px;height:360px;overflow-y:auto;padding:14px}
+.m{max-width:80%;padding:9px 14px;border-radius:16px;background:var(--edge)}.m.me{align-self:flex-end;background:var(--ink);color:var(--a)}
+.row2{display:flex;gap:8px;margin-top:10px}.row2 button{flex:none}
+.stars button{background:none;font-size:2rem;padding:0 4px;color:var(--soft)}.stars button.on{color:#f0b429}
+.scale{display:flex;justify-content:space-between;gap:10px;align-items:center}.scale select{width:auto}
+.err{color:var(--warn)}.ok{color:var(--teal)}
+@media(max-width:760px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav id="nav"><b>Solace</b></nav>
+<main>
+
+<!-- 1. ABOUT: Himani's top + Dikshita's team section -->
+<section class="page" id="p-about">
+  <div class="hero">
+    <div><blockquote>“You don’t have to control your thoughts. You just have to stop letting them control you.”</blockquote><p class="mute">Dan Millman</p></div>
+    <div class="scene" aria-hidden="true"><div class="cube"><i>Calm</i><i>Care</i><i>Hope</i><i>Focus</i><i>Joy</i><i>Rest</i></div></div>
+  </div>
+  <h2>Why mental health matters</h2>
+  <p>Mental health shapes how we think, feel, work and relate to the people around us. Left unnoticed, small struggles can grow, yet many people wait years to ask for help because of stigma, cost or not knowing where to start.</p>
+  <h2>How Solace helps</h2>
+  <div class="grid">
+    <div class="card tilt"><h3>Understand</h3><p>Plain-language guides to common disorders and honest statistics.</p></div>
+    <div class="card tilt"><h3>Check in</h3><p>A short symptom survey gives a screening estimate. It is not a diagnosis.</p></div>
+    <div class="card tilt"><h3>Practise</h3><p>Brain games matched to the condition you may be facing.</p></div>
+    <div class="card tilt"><h3>Talk</h3><p>A friendly chat assistant listens and helps you find your way around.</p></div>
+  </div>
+  <h2 style="margin-top:34px">The team</h2>
+  <div class="team">
+    <div class="card"><div class="av" style="background:#3a6bd6">H</div><h3>Himani Aggarwal</h3><p class="mute" style="margin:0">24/1345</p></div>
+    <div class="card"><div class="av" style="background:#2f9e8f">D</div><h3>Dikshita Yadav</h3><p class="mute" style="margin:0">24/1424</p></div>
+    <div class="card"><div class="av" style="background:#1c2b3d">P</div><h3>Prachi Chourasiya</h3><p class="mute" style="margin:0">24/1610</p></div>
+  </div>
+  <p class="mute" style="margin-top:14px">Software Engineering project, Batch 2024–2027. Built with Django, MySQL, HTML, CSS and JavaScript.</p>
+</section>
+
+<!-- 2. USER LOGIN (Dikshita) -->
+<section class="page" id="p-login">
+  <form class="card box" id="uf" novalidate>
+    <h2 style="text-align:center">Welcome to Solace</h2>
+    <div class="tabs"><button type="button" class="on" data-m="in">Sign in</button><button type="button" data-m="up">Create account</button></div>
+    <div id="upx" hidden><label for="un">Full name</label><input id="un" autocomplete="name"><label for="ua">Age</label><input id="ua" type="number" min="1" max="120"></div>
+    <label for="ue">Email</label><input id="ue" type="email" autocomplete="email">
+    <label for="upw">Password</label><input id="upw" type="password" autocomplete="current-password">
+    <p class="mute" style="margin:18px 0 12px;font-size:.85rem">Your details are stored securely and never shared.</p>
+    <button style="width:100%" id="ub">Sign in</button>
+    <p id="um" role="status" style="margin:14px 0 0;text-align:center;font-weight:600"></p>
+    <p style="text-align:center;margin:14px 0 0;font-size:.9rem">Are you a clinician? <a href="#admin">Go to the admin portal</a></p>
+  </form>
+</section>
+
+<!-- 3. DISORDERS (Dikshita) -->
+<section class="page" id="p-disorders">
+  <h2>Learn about common conditions</h2>
+  <p class="mute">Understanding what a condition looks like is often the first step to asking for help. Experiencing some signs does not mean you have a disorder; only a licensed professional can diagnose.</p>
+  <div class="chips" id="dch"></div>
+  <div class="grid" id="dgr"></div>
+</section>
+
+<!-- 4. DASHBOARD (Dikshita) -->
+<section class="page" id="p-dashboard">
+  <h2>Mental health at a glance</h2>
+  <p class="mute">Aggregated statistics from public datasets such as the WHO Mental Health Atlas, refreshed on a schedule rather than in real time.</p>
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <div class="card stat"><b>1 in 8</b>people worldwide live with a mental disorder (WHO)</div>
+    <div class="card stat"><b>Sample</b>figures below are placeholders until the data job runs</div>
+    <div class="card stat"><b id="lu">–</b>last updated</div>
+  </div>
+  <div class="two">
+    <div class="card"><h3>Prevalence by condition (sample, %)</h3><div id="bars"></div></div>
+    <div class="card"><h3>Seeking professional help (sample)</h3>
+      <svg viewBox="0 0 120 120" width="100%" style="max-width:220px;display:block;margin:auto" role="img" aria-label="Donut: 38 percent seek help">
+      <circle cx="60" cy="60" r="44" fill="none" stroke="var(--edge)" stroke-width="18"/>
+      <circle cx="60" cy="60" r="44" fill="none" stroke="var(--teal)" stroke-width="18" stroke-dasharray="105 172" transform="rotate(-90 60 60)" stroke-linecap="round"/>
+      <text x="60" y="66" text-anchor="middle" font-size="20" font-weight="700" fill="var(--ink)" font-family="Fraunces,serif">38%</text></svg>
+      <p class="mute" style="text-align:center;font-size:.9rem">of people with symptoms reach professional care</p></div>
+  </div>
+  <div class="card" style="margin-top:18px"><h3>Cases by year (sample, millions)</h3><svg id="line" viewBox="0 0 600 180" width="100%" role="img" aria-label="Line chart of cases by year"></svg></div>
+</section>
+
+<!-- 5. GAMES (Dikshita + disorder names + coming soon) -->
+<section class="page" id="p-games">
+  <h2>Brain games and calming exercises</h2>
+  <p class="mute">Short exercises tied to the pattern flagged in your screening. Each one shows the condition it helps with. They support wellbeing and are not a treatment.</p>
+  <div class="two">
+    <div class="card"><h3>Memory match <span class="tag">Helps with ADHD</span></h3><p>Find all the pairs. Moves: <b id="mv">0</b></p><div class="mem" id="mem"></div><p style="margin-top:12px"><button class="alt" id="mr">New game</button></p></div>
+    <div class="card"><h3>Box breathing <span class="tag">Helps with Anxiety</span></h3><p>Breathe in as the circle grows, out as it shrinks.</p><div class="circ" id="circ">Ready</div><p style="text-align:center"><button id="bb">Start</button></p></div>
+  </div>
+  <h3 style="margin-top:28px">Suggested for you</h3>
+  <div class="grid">
+    <div class="card"><div class="ic">🎯</div><h3>Focus tracker</h3><span class="tag">Helps with ADHD</span><p>Sustained-attention drills for restless or scattered focus.</p></div>
+    <div class="card"><div class="ic">🌱</div><h3>Gratitude journal</h3><span class="tag">Helps with Depression</span><p>Three small things a day to gently lift low mood.</p></div>
+    <div class="card"><div class="ic">🌙</div><h3>Wind-down routine</h3><span class="tag">Helps with Anxiety</span><p>A guided evening routine for better sleep.</p></div>
+  </div>
+  <h3 style="margin-top:28px">Coming soon</h3>
+  <div class="grid" id="gameGrid"></div>
+</section>
+
+<!-- 6. LEARN ABOUT YOURSELF (Himani) -->
+<section class="page" id="p-check">
+  <h2>Learn about yourself</h2>
+  <div class="card" id="gate">
+    <h3>Do you feel you may have a disorder?</h3>
+    <div class="row2"><button onclick="gate(1)">Yes</button><button class="alt" onclick="gate(0)">Not sure</button><button class="alt" onclick="gate(2)">No</button></div>
+    <p id="gateMsg" class="mute"></p>
+  </div>
+  <form class="card" id="survey" style="display:none;max-width:none;margin-top:16px"></form>
+  <div class="card" id="result" style="display:none;margin-top:16px"></div>
+</section>
+
+<!-- 7. CHAT (Himani) -->
+<section class="page" id="p-chat">
+  <h2>Talk to Lumos</h2>
+  <div class="card"><div class="chat" id="chat" aria-live="polite"></div>
+  <form class="row2" id="chatForm" style="max-width:none"><input id="ci" placeholder="Type how you’re feeling…" aria-label="Message"><button>Send</button></form></div>
+</section>
+
+<!-- 8. ADMIN (Dikshita's layout, backend-ready, no mock responses) -->
+<section class="page" id="p-admin">
+  <div id="ad-in"><form class="card box" id="af" novalidate>
+    <h2 style="text-align:center">Clinician sign in</h2>
+    <p class="mute" style="text-align:center;font-size:.9rem">Restricted to verified mental health experts.</p>
+    <label for="ae">Work email</label><input id="ae" type="email"><label for="ap">Password</label><input id="ap" type="password">
+    <p style="margin:16px 0"></p><button style="width:100%">Open admin portal</button>
+    <p id="am" role="status" style="text-align:center;font-weight:600;margin:12px 0 0"></p></form></div>
+  <div id="ad-out" hidden>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px"><h2 style="margin:0">Patient records</h2><span><button class="alt" id="newp">New admission</button> <button class="alt" id="so">Sign out</button></span></div>
+    <div class="two" style="margin-top:18px">
+      <div class="card"><label for="sq" style="margin-top:0">Search patients</label><input id="sq" placeholder="Name or ID"><table style="margin-top:12px"><thead><tr><th>ID</th><th>Name</th><th>Last screening</th></tr></thead><tbody id="pt"></tbody></table></div>
+      <div class="card" id="pd"><h3>Decision support</h3><p class="mute">Select a patient to review their reported symptoms and the suggested screening category.</p></div>
+    </div>
+    <div class="note">AI suggestions support clinical review only; final judgement rests with the clinician.</div>
+  </div>
+</section>
+
+<!-- 9. FEEDBACK (Himani) -->
+<section class="page" id="p-feedback">
+  <h2>Tell us how we’re doing</h2>
+  <form class="card" id="fbForm">
+    <div class="stars" id="stars" role="group" aria-label="Rating"></div>
+    <label for="ft">Your feedback</label><textarea id="ft" rows="4" required></textarea>
+    <div class="row2"><button>Send feedback</button></div>
+    <p id="fbMsg" class="mute"></p>
+  </form>
+</section>
+
+</main>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ===== ROUTER (hash links: #about, #login, ...) ===== */
+const PAGES=[['about','About'],['login','Login'],['disorders','Disorders'],['dashboard','Dashboard'],['games','Games'],['check','About you'],['chat','Chat'],['admin','Admin'],['feedback','Feedback']];
+$('#nav').insertAdjacentHTML('beforeend',PAGES.map(p=>`<a href="#${p[0]}" data-p="${p[0]}">${p[1]}</a>`).join(''));
+function route(){
+  let id=location.hash.slice(1)||'about'; if(!PAGES.some(p=>p[0]===id)) id='about';
+  $$('.page').forEach(s=>s.classList.toggle('show',s.id==='p-'+id));
+  $$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.p===id));
+  if(id==='dashboard') setTimeout(()=>$$('.br i').forEach(i=>i.style.width=i.dataset.w+'%'),80);
+  scrollTo(0,0);
+}
+addEventListener('hashchange',route);
+
+/* ===== 2. USER LOGIN (front-end checks only) ===== */
+let mode='in';
+$$('.tabs button').forEach(b=>b.onclick=()=>{mode=b.dataset.m;$$('.tabs button').forEach(x=>x.classList.toggle('on',x===b));$('#upx').hidden=mode==='in';$('#ub').textContent=mode==='in'?'Sign in':'Create account';$('#um').textContent=''});
+$('#uf').onsubmit=e=>{e.preventDefault();const m=$('#um');
+  if(!/^\S+@\S+\.\S+$/.test($('#ue').value)||$('#upw').value.length<6){m.className='err';m.textContent='Enter a valid email and a password of at least 6 characters.';return}
+  if(mode==='up'&&(!$('#un').value.trim()||!$('#ua').value)){m.className='err';m.textContent='Add your name and age to create an account.';return}
+  m.className='ok';m.textContent=mode==='in'?'Signed in. Taking you to Lumos…':'Account created. Taking you to Lumos…';setTimeout(()=>location.hash='chat',900)};
+
+/* ===== 3. DISORDERS ===== */
+const D=[
+['Depression','Mood','Persistent low mood, loss of interest, changes in sleep or appetite, low energy, feeling worthless.','Talk therapy, medication in some cases, routine and social support.'],
+['Anxiety','Anxiety','Constant worry, restlessness, racing heart, trouble concentrating, avoiding situations that cause fear.','Cognitive behavioural therapy, relaxation techniques, medication when advised.'],
+['ADHD','Attention','Difficulty sustaining focus, impulsivity, forgetfulness, restlessness, trouble finishing tasks.','Behavioural strategies, structured routines, attention training, medication when advised.'],
+['Bipolar disorder','Mood','Swings between very high energy and deep lows, reduced need for sleep, racing thoughts.','Mood-stabilising treatment guided by a psychiatrist, regular sleep, therapy.'],
+['OCD','Anxiety','Unwanted repeating thoughts and rituals performed to ease distress, such as checking or cleaning.','Exposure and response prevention therapy, medication when advised.'],
+['PTSD','Trauma','Flashbacks, nightmares, being easily startled, avoiding reminders of a distressing event.','Trauma-focused therapy, grounding skills, community support.']];
+const cats=['All',...new Set(D.map(d=>d[1]))];let cat='All';
+function rd(){$('#dch').innerHTML=cats.map(c=>`<button class="alt chip ${c===cat?'on':''}" data-c="${c}">${c}</button>`).join('');
+  $('#dgr').innerHTML=D.filter(d=>cat==='All'||d[1]===cat).map(d=>`<div class="card dz"><h3>${d[0]} <span class="tag">${d[1]}</span></h3><b>Common signs</b><ul><li>${d[2].split(', ').join('</li><li>')}</li></ul><b>What can help</b><p class="mute" style="margin:6px 0 0">${d[3]}</p></div>`).join('');
+  $$('#dch button').forEach(b=>b.onclick=()=>{cat=b.dataset.c;rd()})}
+rd();
+
+/* ===== 4. DASHBOARD (sample data) ===== */
+const B=[['Anxiety',4.4,'#3a6bd6'],['Depression',3.8,'#2f9e8f'],['ADHD',2.6,'#6c8fe8'],['Bipolar',0.6,'#7bbf9e'],['PTSD',3.9,'#1c2b3d']];
+$('#bars').innerHTML=B.map(b=>`<div class="br"><span>${b[0]}</span><span class="t"><i data-w="${b[1]/5*100}" style="background:${b[2]}"></i></span><b>${b[1]}</b></div>`).join('');
+const pts=[[2018,790],[2019,820],[2020,880],[2021,930],[2022,960],[2023,985]],Y=p=>150-(p-760)/1.8;
+$('#line').innerHTML='<polyline fill="none" stroke="var(--acc)" stroke-width="3" points="'+pts.map((p,i)=>`${40+i*105},${Y(p[1])}`).join(' ')+'"/>'+pts.map((p,i)=>{const x=40+i*105,y=Y(p[1]);return `<circle cx="${x}" cy="${y}" r="5" fill="var(--teal)"/><text x="${x}" y="172" text-anchor="middle" font-size="12" fill="var(--soft)">${p[0]}</text><text x="${x}" y="${y-10}" text-anchor="middle" font-size="12" fill="var(--ink)">${p[1]}</text>`}).join('');
+$('#lu').textContent=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+
+/* ===== 5. GAMES ===== */
+const GAMES=[['ADHD',['Blocky’s 3D Block Adventure','Townscraper']],['Anxiety',['Breathing Bubble','Calm Colouring']],['Depression',['Gratitude Garden','Daily Quest']],['OCD',['Letting-Go Puzzles','Flow Free']],['PTSD',['Safe Place Builder','Grounding 5-4-3-2-1']],['Autism spectrum',['Pattern Parade','Emotion Match']]];
+$('#gameGrid').innerHTML=GAMES.map(g=>`<div class="card tilt"><h3>Helps with ${g[0]}</h3>${g[1].map(n=>`<p style="margin:.4em 0"><span class="pill">Coming soon</span>${n}</p>`).join('')}</div>`).join('');
+let first=null,lock=false,moves=0;
+function mg(){const e=['🌿','🌙','☀️','🌊','🦋','🌸','⭐','🍃'],a=[...e,...e].sort(()=>Math.random()-.5);moves=0;first=null;$('#mv').textContent=0;
+  $('#mem').innerHTML=a.map(x=>`<button aria-label="card" data-e="${x}"></button>`).join('');
+  $$('#mem button').forEach(b=>b.onclick=()=>{if(lock||b.classList.contains('f')||b.classList.contains('m'))return;b.classList.add('f');b.textContent=b.dataset.e;
+    if(!first){first=b;return}moves++;$('#mv').textContent=moves;
+    if(first.dataset.e===b.dataset.e){first.className=b.className='m';first=null}else{lock=true;const f=first;first=null;setTimeout(()=>{f.className=b.className='';f.textContent=b.textContent='';lock=false},700)}})}
+$('#mr').onclick=mg;mg();
+let bt;$('#bb').onclick=function(){if(bt){clearInterval(bt);bt=0;this.textContent='Start';$('#circ').textContent='Ready';$('#circ').style.transform='';return}
+  this.textContent='Stop';let ph=0;const P=['Breathe in','Hold','Breathe out','Hold'];
+  const t=()=>{$('#circ').textContent=P[ph%4];$('#circ').style.transform=ph%4<2?'scale(1.4)':'scale(1)';ph++};t();bt=setInterval(t,4000)};
+
+/* ===== 6. LEARN ABOUT YOURSELF (local scoring only) ===== */
+const F=['Low mood','Loss of interest','Excessive worry','Panic episodes','Trouble concentrating','Restlessness','Intrusive thoughts','Repetitive behaviours','Flashbacks','Sleep problems','Mood swings','Social withdrawal'];
+const W={Depression:[3,3,0,0,1,0,0,0,0,2,1,2],Anxiety:[0,0,3,3,1,1,0,0,0,2,0,1],ADHD:[0,0,0,0,3,3,0,0,0,1,1,0],OCD:[0,0,1,0,0,0,3,3,0,0,0,0],PTSD:[0,0,1,1,1,0,1,0,3,3,0,1],Bipolar:[1,0,0,0,1,1,0,0,0,2,3,0]};
+const predict=x=>Object.keys(W).map(d=>[d,Math.round(100*W[d].reduce((s,w,i)=>s+w*x[i],0)/(3*W[d].reduce((a,b)=>a+b,0)))]).sort((a,b)=>b[1]-a[1]);
+function gate(v){
+  if(v===2){$('#gateMsg').textContent='Glad to hear it. You can still take the check-in any time.';return}
+  $('#gateMsg').textContent='';$('#survey').style.display='block';
+  $('#survey').innerHTML='<h3>Rate each in the last two weeks (0 = never, 3 = nearly every day)</h3>'+F.map((f,i)=>`<div class="scale"><label for="f${i}" style="margin:6px 0">${f}</label><select id="f${i}">${[0,1,2,3].map(n=>`<option>${n}</option>`).join('')}</select></div>`).join('')+'<div class="row2"><button>See my estimate</button></div>'}
+$('#survey').onsubmit=e=>{e.preventDefault();const r=predict(F.map((_,i)=>+$('#f'+i).value));
+  $('#result').style.display='block';
+  $('#result').innerHTML='<h3>Your screening estimate</h3>'+r.slice(0,3).map(s=>`<b>${s[0]}</b> <span class="mute">${s[1]}% match</span><div class="bar"><i style="width:${s[1]}%"></i></div>`).join('')+'<p class="mute">This is a screening estimate, not a diagnosis. Please talk to a licensed professional. <a href="#games">See matching games</a>.</p>'};
+
+/* ===== 7. CHAT (rule-based) ===== */
+function say(t,me){const d=document.createElement('div');d.className='m'+(me?' me':'');d.innerHTML=t;$('#chat').append(d);$('#chat').scrollTop=1e9}
+function reply(t){t=t.toLowerCase();
+  if(/suicid|kill myself|end my life|self.?harm|hurt myself/.test(t)) return 'I’m really glad you told me. You deserve support right now. Please contact your local emergency number or a crisis helpline, or reach out to someone you trust. I’m here to keep talking too.';
+  if(/game|play/.test(t)) return 'Our <a href="#games">Games page</a> has gentle activities matched to different conditions.';
+  if(/stat|dashboard|number/.test(t)) return 'You can see the figures on the <a href="#dashboard">Dashboard</a>.';
+  if(/test|quiz|survey|symptom|check/.test(t)) return 'The <a href="#check">Learn about yourself</a> survey gives a screening estimate.';
+  if(/disorder|learn|what is/.test(t)) return 'The <a href="#disorders">Disorders page</a> explains common conditions in plain language.';
+  if(/feedback/.test(t)) return 'We’d love to hear from you on the <a href="#feedback">Feedback page</a>.';
+  if(/sad|down|depress|lonely|empty/.test(t)) return 'That sounds heavy. How long have you been feeling this way?';
+  if(/anx|worr|panic|stress|nervous/.test(t)) return 'Thank you for sharing that. What does the worry feel like in your body right now?';
+  if(/sleep|tired|insomnia/.test(t)) return 'Sleep affects everything. What usually keeps you up?';
+  return 'I’m listening. Tell me more, or ask me to show you around the site.'}
+say('Hi, I’m Lumos. I can listen, or point you to the right page. How are you feeling today?');
+$('#chatForm').onsubmit=e=>{e.preventDefault();const t=$('#ci').value.trim();if(!t)return;$('#ci').value='';say(esc(t),1);setTimeout(()=>say(reply(t)),400)};
+
+/* ===== 8. ADMIN: ready for a Python (Django) backend + MySQL =====
+   1. Set ADMIN_API to your server, e.g. 'http://127.0.0.1:8000' (enable CORS).
+   2. Build these endpoints (JSON):
+        POST  /api/admin/login      {email,password}        -> {token}
+        GET   /api/patients?q=text                           -> [{id,name,category,symptoms,notes}]
+        POST  /api/patients         {name,age,symptoms}     -> {id,name,category,symptoms,notes}
+        PATCH /api/patients/<id>    {notes}                  -> {ok:true}
+      Suggested MySQL table: patients(id, name, age, symptoms, category, notes, created_at)
+   Until then no data is faked: the list is empty and sign-in says the backend is not connected.
+   DEV_PREVIEW=true only opens the portal layout without signing in (for design checks). */
+const ADMIN_API='', DEV_PREVIEW=false;
+let token='', P=[];
+async function adm(path,method='GET',body){
+  if(!ADMIN_API) throw new Error('nobackend');
+  const r=await fetch(ADMIN_API+path,{method,headers:{'Content-Type':'application/json',...(token&&{Authorization:'Bearer '+token})},body:body&&JSON.stringify(body)});
+  if(!r.ok) throw new Error(r.status); return r.json();
+}
+const sm=(t,ok)=>{const m=$('#sm');if(m){m.className=ok?'ok':'err';m.textContent=t}};
+const fail=e=>e.message==='nobackend'?'Backend not connected yet. Set ADMIN_API in the script.':'Something went wrong. Please try again.';
+function open_(){$('#ad-in').hidden=true;$('#ad-out').hidden=false;loadP()}
+$('#af').onsubmit=async e=>{e.preventDefault();const m=$('#am');
+  if(!/^\S+@\S+\.\S+$/.test($('#ae').value)||!$('#ap').value){m.className='err';m.textContent='Enter your work email and password.';return}
+  if(DEV_PREVIEW) return open_();
+  try{token=(await adm('/api/admin/login','POST',{email:$('#ae').value,password:$('#ap').value})).token;open_()}
+  catch(x){m.className='err';m.textContent=x.message==='nobackend'?fail(x):'Sign-in failed. Check your email and password.'}};
+$('#so').onclick=()=>{token='';P=[];$('#ad-in').hidden=false;$('#ad-out').hidden=true;$('#ap').value=''};
+async function loadP(q=''){try{P=await adm('/api/patients?q='+encodeURIComponent(q))}catch(x){P=[]}
+  $('#pt').innerHTML=P.map(p=>`<tr class="row" data-id="${esc(p.id)}" tabindex="0"><td>${esc(p.id)}</td><td>${esc(p.name)}</td><td>${esc(p.category)}</td></tr>`).join('')||'<tr><td colspan="3">No patients to show. Try a different name or ID, or add a new admission.</td></tr>';
+  $$('.row').forEach(r=>{const o=()=>{const p=P.find(x=>String(x.id)===r.dataset.id);
+    $('#pd').innerHTML=`<h3>${esc(p.name)} <span class="tag">${esc(p.id)}</span></h3><b>Reported symptoms</b><p>${esc(p.symptoms)}</p><b>AI-suggested category</b><p>${esc(p.category)}</p><label for="cn">Clinical notes</label><input id="cn" placeholder="Record your assessment" value="${esc(p.notes)}"><p style="margin:14px 0 0"><button id="sn">Save notes</button></p><p id="sm" role="status" style="font-weight:600"></p>`;
+    $('#sn').onclick=async()=>{try{await adm('/api/patients/'+p.id,'PATCH',{notes:$('#cn').value});sm('Notes saved to the patient record.',1)}catch(x){sm(fail(x))}}};
+    r.onclick=o;r.onkeydown=e=>{if(e.key==='Enter')o()}})}
+$('#sq').oninput=e=>loadP(e.target.value);
+$('#newp').onclick=()=>{$('#pd').innerHTML='<h3>New admission</h3><label for="nn">Patient name</label><input id="nn"><label for="na">Age</label><input id="na" type="number"><label for="ns">Presenting symptoms</label><input id="ns"><p style="margin:14px 0 0"><button id="ns2">Save patient</button></p><p id="sm" role="status" style="font-weight:600"></p>';
+  $('#ns2').onclick=async()=>{if(!$('#nn').value.trim()){sm('Enter the patient’s name to continue.');return}
+    try{await adm('/api/patients','POST',{name:$('#nn').value,age:+$('#na').value||null,symptoms:$('#ns').value});await loadP();$('#pd').innerHTML='<h3>Patient added</h3><p class="mute">The new record now appears in the list.</p>'}catch(x){sm(fail(x))}}};
+
+/* ===== 9. FEEDBACK (local only) ===== */
+$('#stars').innerHTML=[1,2,3,4,5].map(n=>`<button type="button" aria-label="${n} stars" data-n="${n}">★</button>`).join('');
+$('#stars').onclick=e=>{const n=+e.target.dataset.n;if(!n)return;$$('#stars button').forEach(b=>b.classList.toggle('on',+b.dataset.n<=n))};
+$('#fbForm').onsubmit=e=>{e.preventDefault();$('#fbMsg').textContent='Thank you. Your feedback was received.';$('#ft').value=''};
+
+/* ===== 3D tilt on cards ===== */
+document.addEventListener('mousemove',e=>{const c=e.target.closest&&e.target.closest('.tilt');
+  $$('.tilt').forEach(t=>{if(t!==c)t.style.transform=''});
+  if(!c||matchMedia('(prefers-reduced-motion:reduce)').matches)return;
+  const r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+  c.style.transform=`perspective(600px) rotateX(${-y*8}deg) rotateY(${x*8}deg)`});
+route();
+</script>
+</body>
+</html>
